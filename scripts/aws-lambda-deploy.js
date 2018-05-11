@@ -18,7 +18,6 @@ const execCommand = Promise.promisify(exec);
 
 const cwd = process.cwd();
 const zipLambdaCommand = `
-  cd ${cwd}/lambda/${lambdaName}/ &&
   npm install --production &&
   zip -r ${lambdaName}.zip * --quiet`;
 
