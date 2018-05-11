@@ -4,7 +4,6 @@
   "description": "CRUD ops for Data Model",
   "main": "index.js",
   "devDependencies": {
-    "aws-sdk": "^2.238.1",
     "bluebird": "^3.5.1",
     "serverless": "^1.27.2"
   },
@@ -20,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/LosElephants/grinder-lambda/issues"
   },
-  "homepage": "https://github.com/LosElephants/grinder-lambda#readme"
+  "homepage": "https://github.com/LosElephants/grinder-lambda#readme",
+  "dependencies": {
+    "aws-sdk": "^2.238.1"
+  }
 }

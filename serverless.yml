@@ -59,6 +59,12 @@ functions:
     handler: index.handler
   info:
     handler: index.info
+  profile:
+    handler: index.profile
+    events:
+      - http:
+          path: profiles/
+          method: post
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
