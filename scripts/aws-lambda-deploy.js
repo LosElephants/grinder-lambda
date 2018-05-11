@@ -3,7 +3,7 @@ const read = require('fs').readFileSync;
 const AWS = require('aws-sdk');
 const Promise = require('bluebird');
 
-AWS.config.update({ region: process.env.AWS_REGION })
+AWS.config.update({ region: 'us-east-2' })
 
 const lambdaName = process.argv[2];
 if (!lambdaName) {
