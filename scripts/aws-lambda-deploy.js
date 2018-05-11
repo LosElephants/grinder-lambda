@@ -12,7 +12,7 @@ if (!lambdaName) {
 }
 
 const lambda = new AWS.Lambda({
-  region: process.env.REGION
+  region: 'us-east-2'
 });
 
 const lambdaUpdateFunctionCode = Promise.promisify(lambda.updateFunctionCode.bind(lambda));
@@ -28,8 +28,7 @@ execCommand(zipLambdaCommand)
   const lambdaUpdateFunctionCodeParams = {
     FunctionName: `${lambdaName}`,
     Publish: true,
-    ZipFile: read(`${lambdaName}.zip`),
-    Region: 'us-east-2'
+    ZipFile: read(`${lambdaName}.zip`)
   };
   console.log('Uploading code to lambda with params:', lambdaUpdateFunctionCodeParams);
   return lambdaUpdateFunctionCode(lambdaUpdateFunctionCodeParams);
