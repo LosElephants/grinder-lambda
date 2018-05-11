@@ -8,7 +8,7 @@ before_install:
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
 after_install:
-  - (cd lambda/hello-world/ && npm install --production)
+  - npm install --production
 after_success:
   - npm run test
 deploy:
