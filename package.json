@@ -3,12 +3,10 @@
   "version": "0.1.0",
   "description": "CRUD ops for Data Model",
   "main": "index.js",
-  "dependencies": {
-    "serverless": "^1.27.2"
-  },
   "devDependencies": {
     "aws-sdk": "^2.238.1",
-    "bluebird": "^3.5.1"
+    "bluebird": "^3.5.1",
+    "serverless": "^1.27.2"
   },
   "scripts": {
     "test": "echo \"No tests configured yet\""

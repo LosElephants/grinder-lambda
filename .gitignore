@@ -4,3 +4,9 @@ jspm_packages
 
 # Serverless directories
 .serverless
+
+# local environment vars
+.env*.local
+
+# VSCode configuration
+.vscode/
