@@ -3,6 +3,8 @@ const read = require('fs').readFileSync;
 const AWS = require('aws-sdk');
 const Promise = require('bluebird');
 
+AWS.config.update({ region: process.env.AWS_REGION })
+
 const lambdaName = process.argv[2];
 if (!lambdaName) {
   console.error('Error: missing lambda name.');
