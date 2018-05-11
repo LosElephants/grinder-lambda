@@ -7,8 +7,6 @@ cache:
 before_install:
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
-after_install:
-  - npm install --production
 after_success:
   - npm run test
 deploy:
