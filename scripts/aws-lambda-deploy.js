@@ -26,7 +26,7 @@ execCommand(zipLambdaCommand)
   const lambdaUpdateFunctionCodeParams = {
     FunctionName: `${lambdaName}`,
     Publish: true,
-    ZipFile: read(`${cwd}/lambda/${lambdaName}/${lambdaName}.zip`)
+    ZipFile: read(`${lambdaName}.zip`)
   };
   console.log('Uploading code to lambda with params:', lambdaUpdateFunctionCodeParams);
   return lambdaUpdateFunctionCode(lambdaUpdateFunctionCodeParams);
