@@ -17,6 +17,9 @@ deploy:
     handler_name: "handler"
     access_key_id: "$AWS_ACCESS_KEY_ID"
     secret_access_key: "$AWS_SECRET_KEY"
+    on:
+      all_branches: true
+      condition: "$TRAVIS_BRANCH =~ ^master|develop$"
   - provider: lambda
     function_name: "info"
     region: "$AWS_DEFAULT_REGION"
@@ -25,6 +28,9 @@ deploy:
     handler_name: "info"
     access_key_id: "$AWS_ACCESS_KEY_ID"
     secret_access_key: "$AWS_SECRET_KEY"
+    on:
+      all_branches: true
+      condition: "$TRAVIS_BRANCH =~ ^master|develop$"
 notifications:
   slack:
     secure: f66JDRBZz2kmpbyHN7PyVrvNe+jKt50n1Fd0Icwn8L5rO5RksK9ooHAhOTaAfaWrNQidpU4+PbYe6hr9hwwVRJ2De2c9oPI5sYLt4PCLxB4JxP4IcEgNDmcOcYjI+KI2uC4ARUPtsc5DY2p7TZS+wBOn85P6/Y27NFB3xoCJNGLYXO4SFCskSD58C+Zw8CCgHEnKaRYC0OSnZhUE+hplOkuy3czKtSEISG3zX29+Pouec3of1GLFuRatpdvtT675cWi6lu2G4p8lI/Tr6hs0kviYAo17uezSn9Ivj3mFuj4B2SrFy5/zl4p3/bjbEfiddTxCSdNq8yP0ynVBBD39PfIU9zx58G4g8ft1wGZNpoKh6VsbVSY/eA2UC7hLPI7FTqQmKIIMS6GhjOeopBXSAHa9z+SxDOkXiq31fleo5Z6w5x2pjy1Y3574jU3WtUn0GGiXgrFA07h64ZnxI6g34ouf+juGxhvEIaFnH8fJP2JwyjgzkqWf+yr87RKRSYbPjFsOteRaouyDbXlSjnKEacwP8kZLHX0xyrwubNjqhMWFzpFrzjcwJB4Au+TzVACmywWIv6+yYWcwiMa5k2b40LlAzJsH9A7dCG5I8CoggKqt41EnXrXaAvAuOI13CTHL0H+X+iuRb9q3CWPO9YQJvIphbgRE2yMQ6lKiQyOMI+0=
