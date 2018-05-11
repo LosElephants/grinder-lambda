@@ -57,7 +57,7 @@ provider:
 functions:
   hello:
     handler: index.handler
-  info
+  info:
     handler: index.info
 
 #    The following are a few example events you can configure
