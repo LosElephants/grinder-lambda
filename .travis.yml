@@ -15,7 +15,6 @@ deploy:
   provider: lambda
   function_name: "hello"
   region: "us-east-2"
-  role: "arn:aws:iam::0123456789012:role/lambda_basic_execution"
   runtime: "nodejs6.10.3"
   handler_name: "handler"
   access_key_id: "$AWS_ACCESS_KEY_ID"
