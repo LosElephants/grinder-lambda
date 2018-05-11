@@ -1,0 +1,23 @@
+{
+  "name": "grinder-lambda",
+  "version": "0.1.0",
+  "description": "CRUD ops for Data Model",
+  "main": "index.js",
+  "dependencies": {
+    "serverless": "^1.27.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LosElephants/grinder-lambda.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LosElephants/grinder-lambda/issues"
+  },
+  "homepage": "https://github.com/LosElephants/grinder-lambda#readme"
+}
