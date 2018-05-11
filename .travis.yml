@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- 6.10
+- 6.10.3
 cache:
   directories:
   - node_modules
@@ -16,7 +16,7 @@ deploy:
   function_name: "hello"
   region: "us-east-2"
   role: "arn:aws:iam::410064119746:role/lambda_basic_execution"
-  runtime: "nodejs6.10.3"
+  runtime: "nodejs6.10"
   handler_name: "handler"
   access_key_id: "$AWS_ACCESS_KEY_ID"
   secret_access_key: "$AWS_SECRET_KEY"
