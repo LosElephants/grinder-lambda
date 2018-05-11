@@ -49,13 +49,13 @@ var newProfile = (userId, authProfile) => {
   return profile;
 };
 
-var createProfile = (authProfile, callback) => {
+var createProfile = (authProfile, callback, client) => {
   var profile = newProfile(authProfile);
-  this.saveProfile(profile, callback);
+  saveProfile(profile, callback, client);
 };
 
-var saveProfile = (profile, callback) => {
-  var docClient = this.getDynamoClient();
+var saveProfile = (profile, callback, client) => {
+  var docClient = client || getDynamoClient();
   var putParams = {
     TableName: "UserData",
     Item: profile
@@ -91,7 +91,7 @@ var getProfile = (userId, callback) => {
               body: JSON.stringify({ body: data.Item })
             });
           }
-        });
+        }, client);
       }
     } else {
       callback(null, {
