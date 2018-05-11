@@ -9,6 +9,9 @@ after_install:
 after_success:
   - npm run test
 deploy:
+  on:
+    all_branches: true
+    condition: "$TRAVIS_BRANCH =~ ^master|develop$"
   provider: lambda
   function_name: "hello"
   region: "$AWS_DEFAULT_REGION"
