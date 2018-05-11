@@ -12,7 +12,7 @@ deploy:
   on:
     all_branches: true
     condition: "$TRAVIS_BRANCH =~ ^master|develop$"
-  -provider: lambda
+  - provider: lambda
     function_name: "hello"
     region: "$AWS_DEFAULT_REGION"
     role: "arn:aws:iam::410064119746:role/lambda_basic_execution"
@@ -20,7 +20,7 @@ deploy:
     handler_name: "handler"
     access_key_id: "$AWS_ACCESS_KEY_ID"
     secret_access_key: "$AWS_SECRET_KEY"
-  -provider: lambda
+  - provider: lambda
     function_name: "info"
     region: "$AWS_DEFAULT_REGION"
     role: "arn:aws:iam::410064119746:role/lambda_basic_execution"
