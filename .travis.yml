@@ -4,6 +4,9 @@ node_js:
 cache:
   directories:
   - node_modules
+before_install:
+- pip install --user awscli
+- export PATH=$PATH:$HOME/.local/bin
 after_install:
   - (cd lambda/hello-world/ && npm install --production)
 after_success:
