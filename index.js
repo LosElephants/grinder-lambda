@@ -82,7 +82,7 @@ var getProfile = (userId, callback) => {
       if (!data) {
         callback(err);
       } else {
-        createProfile(authProfile, (err, data) => {
+        createProfile({userId: userId}, (err, data) => {
           if (err) {
             callback(err);
           } else {
