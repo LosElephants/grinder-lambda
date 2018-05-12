@@ -63,8 +63,15 @@ functions:
     handler: index.profile
     events:
       - http:
-          path: profiles/
-          method: post
+          path: profiles
+          method: GET
+          integration: lambda
+          request:
+            template:
+              application/json: >
+                {
+                  "userId" : "$input.params('userId')",
+                }
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
