@@ -105,6 +105,10 @@ var getProfile = (userId, callback) => {
 };
 
 module.exports.profile = (event, context, callback) => {
+  callback(null, {
+    statusCode: 200,
+    body: JSON.stringify(event)
+  });
   if (event.userId) {
     getProfile(event.userId, callback);
   } else {
