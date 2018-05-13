@@ -82,7 +82,7 @@ var getProfile = (userId, callback) => {
       if (!data) {
         callback(err);
       } else {
-        createProfile({userId: userId}, (err, data) => {
+        createProfile({ userId: userId }, (err, data) => {
           if (err) {
             callback(err);
           } else {
@@ -104,17 +104,32 @@ var getProfile = (userId, callback) => {
   });
 };
 
-module.exports.profile = (event, context, callback) => {
-  callback(null, {
-    statusCode: 200,
-    body: JSON.stringify(event)
-  });
-  if (event.userId) {
-    getProfile(event.userId, callback);
+module.exports.getProfile = (event, context, callback) => {
+  var qParams = event.queryStringParameters;
+  if (qParams && qParams.userId) {
+    getProfile(qParams.userId, callback);
   } else {
     callback(null, {
       statusCode: 400,
-      body: JSON.stringify({ message: "userId is a required field" })
+      body: JSON.stringify({ message: "The query string parameter 'userId' is a required field" })
     });
+  }
+};
+
+module.exports.updateProfile = (event, context, callback) => {
+  var profile = event.body;
+  if (profile) {
+    getProfile(profile.userId, (err, data) => {
+      if (err) {
+        callback(err);
+      } else {
+        for (var key in profile) {
+          data[key] = profile[key];
+          saveProfile(data, callback);
+        }
+      }
+    });
+  } else {
+    callback("Missing request body");
   }
 };

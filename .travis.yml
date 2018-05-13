@@ -8,22 +8,22 @@ after_success:
   - npm run test
 deploy:
   - provider: lambda
-    function_name: "hello"
+    function_name: "getProfile"
     region: "$AWS_DEFAULT_REGION"
     role: "arn:aws:iam::410064119746:role/lambda_basic_execution"
     runtime: "nodejs6.10"
-    handler_name: "handler"
+    handler_name: "getProfile"
     access_key_id: "$AWS_ACCESS_KEY_ID"
     secret_access_key: "$AWS_SECRET_KEY"
     on:
       all_branches: true
       condition: "$TRAVIS_BRANCH =~ ^master|develop$"
   - provider: lambda
-    function_name: "profile"
+    function_name: "updateProfile"
     region: "$AWS_DEFAULT_REGION"
     role: "arn:aws:iam::410064119746:role/lambda_basic_execution"
     runtime: "nodejs6.10"
-    handler_name: "profile"
+    handler_name: "updateProfile"
     access_key_id: "$AWS_ACCESS_KEY_ID"
     secret_access_key: "$AWS_SECRET_KEY"
     on:
