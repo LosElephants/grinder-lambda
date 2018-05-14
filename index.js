@@ -1,49 +1,29 @@
 'use strict';
 
-module.exports.handler = (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Go Serverless v1.0! Your function executed successfully!',
-      input: event,
-    }),
-  };
-
-  callback(null, response);
-};
-
-module.exports.info = (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Multiple functions!',
-      input: event,
-    }),
-  };
-
-  callback(null, response);
-}
+var request = require('request');
 
 var AWS = require('aws-sdk');
 AWS.config.update({
-  region: process.env.AWS_DEFAULT_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_KEY
+  region: 'us-east-2'
 });
 
-var newProfile = (userId, authProfile) => {
+var getDynamoClient = () => {
+  return new AWS.DynamoDB.DocumentClient();
+}
+
+var newProfile = (authProfile) => {
   var profile = {
-    userId: userId,
+    userId: authProfile.sub,
     createdDate: Date.now()
   };
 
   if (authProfile) {
-    for (var key in authProfile) {
-      if (key === 'sub') continue;
-      if (key === 'updated_at') continue;
-
-      profile[key] = authProfile[key];
-    }
+    profile.userId = authProfile.sub;
+    profile.name = authProfile.name;
+    profile.picture = authProfile.picture;
+    profile.locale = authProfile.locale;
+    profile.email = authProfile.email;
+    profile.emailVerified = authProfile.email_verified;
   }
 
   return profile;
@@ -55,6 +35,7 @@ var createProfile = (authProfile, callback, client) => {
 };
 
 var saveProfile = (profile, callback, client) => {
+  console.log('saving profile', JSON.stringify(profile));
   var docClient = client || getDynamoClient();
   var putParams = {
     TableName: "UserData",
@@ -64,13 +45,14 @@ var saveProfile = (profile, callback, client) => {
     if (err) {
       callback(err);
     } else {
-      callback(null, data.Item);
+      callback(null, data);
     }
   });
 };
 
-var getProfile = (userId, callback) => {
-  var client = new AWS.DynamoDB.DocumentClient({ apiVersion: process.env.DYNAMO_CLIENT_VERSION });
+var getProfile = (userId, callback, client) => {
+  console.log("getting profile with userId", userId);
+  var docClient = client || getDynamoClient();
   var getParams = {
     TableName: "UserData",
     Key: {
@@ -78,58 +60,113 @@ var getProfile = (userId, callback) => {
     }
   }
   client.get(getParams, (err, data) => {
-    if (err || !data.Item || !data.Item.userId) {
-      if (!data) {
-        callback(err);
-      } else {
-        createProfile({ userId: userId }, (err, data) => {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, {
-              statusCode: 200,
-              body: JSON.stringify({ body: data.Item })
-            });
-          }
-        }, client);
-      }
+    if (err) {
+      console.log('error getting profile with id:', getParams.Key.userId);
+      callback(err);
     } else {
-      callback(null, {
-        statusCode: 200,
-        body: JSON.stringify({
-          body: data.Item
-        })
-      });
+      console.log('got profile [', getParams.Key.userId, ']', data);
+      callback(null, data.Item);
     }
   });
 };
 
+var authenticate = (auth, callback) => {
+  var options = {
+    url: 'https://grinder.auth0.com/userinfo',
+    headers: {
+      'Authorization': auth
+    }
+  };
+
+  request(options, (error, response, body) => {
+    if (error || response.statusCode != 200) {
+      callback(error);
+    } else {
+      callback(null, JSON.parse(body));
+    }
+  });
+}
+
+const unauthorized = {
+  statusCode: 401,
+  body: JSON.stringify({ message: "Unauthorized" })
+}
+
+var succeed = (data) => {
+  return {
+    statusCode: 200,
+    body: data
+  };
+}
+
 module.exports.getProfile = (event, context, callback) => {
-  var qParams = event.queryStringParameters;
-  if (qParams && qParams.userId) {
-    getProfile(qParams.userId, callback);
-  } else {
-    callback(null, {
-      statusCode: 400,
-      body: JSON.stringify({ message: "The query string parameter 'userId' is a required field" })
-    });
+  if (!event.headers.Authorization) {
+    callback(null, unauthorized);
   }
+
+  authenticate(event.headers.Authorization, (err, authProfile) => {
+    if (err || !authProfile) {
+      callback(null, unauthorized);
+    }
+
+    var client = getDynamoClient();
+    getProfile(authProfile.sub, (err, data) => {
+      if (err || !data) {
+        createProfile(authProfile, (err, data) => {
+          if (err) {
+            console.log("failure creating profile? defect or system outage");
+            callback(err);
+          } else {
+            getProfile(authProfile.sub, (err, data) => {
+              if (err) {
+                console.log("failure getting profile that just got created? defect or system outage");
+                callback(err);
+              } else {
+                console.log("succeeding", data);
+                callback(null, succeed(data));
+              }
+            }, client);
+          }
+        }, client);
+      } else {
+        callback(null, succeed(data));
+      }
+    }, client);
+  });
 };
 
 module.exports.updateProfile = (event, context, callback) => {
-  var profile = event.body;
-  if (profile) {
+  if (!event.headers.Authorization) {
+    callback(null, unauthorized);
+  }
+
+  authenticate(event.headers.Authorization, (err, authProfile) => {
+    if (err || !authProfile) {
+      callback(null, unauthorized);
+    }
+
+    var profile = JSON.parse(event.body);
+    if (profile.userId !== authProfile.sub) {
+      callback(null, unauthorized);
+    }
+
+    var client = getDynamoClient();
+
     getProfile(profile.userId, (err, data) => {
       if (err) {
         callback(err);
       } else {
         for (var key in profile) {
           data[key] = profile[key];
-          saveProfile(data, callback);
         }
+        saveProfile(data, (err, d) => {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, succeed(data));
+          }
+        }, client);
       }
-    });
-  } else {
-    callback("Missing request body");
-  }
+    }, client);
+  });
 };

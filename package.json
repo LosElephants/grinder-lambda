@@ -5,10 +5,14 @@
   "main": "index.js",
   "devDependencies": {
     "bluebird": "^3.5.1",
-    "serverless": "^1.27.2"
+    "mocha": "^5.1.1",
+    "serverless": "^1.27.2",
+    "serverless-offline": "^3.21.1"
   },
   "scripts": {
-    "test": "echo \"No tests configured yet\""
+    "start": "./node_modules/.bin/sls offline -s dev",
+    "debug": "export SLS_DEBUG=* && node --debug ./node_modules/.bin/sls offline -s dev",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -21,6 +25,8 @@
   },
   "homepage": "https://github.com/LosElephants/grinder-lambda#readme",
   "dependencies": {
-    "aws-sdk": "^2.238.1"
+    "auth0-js": "^9.5.1",
+    "aws-sdk": "^2.238.1",
+    "request": "^2.85.0"
   }
 }
