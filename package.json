@@ -12,7 +12,7 @@
   "scripts": {
     "start": "./node_modules/.bin/sls offline -s dev",
     "debug": "export SLS_DEBUG=* && node --debug ./node_modules/.bin/sls offline -s dev",
-    "test": "mocha"
+    "test": "echo \"no tests configured yet\" && exit 0"
   },
   "repository": {
     "type": "git",
