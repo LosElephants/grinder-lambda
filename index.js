@@ -186,26 +186,15 @@ module.exports.updateProfile = (event, context, callback) => {
 };
 
 module.exports.app = (event, context, callback) => {
-  AWS.config.update({
-    region: 'us-east-2',
-  });
-  var s3 = new AWS.S3({ region: 'us-east-2' });
-  var params = {
-    Bucket: "",
-    Key: "index.html",
-  }
-  s3.getObject(params, function(err, data) {
-    if (err) {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify({ error : err })
-      })
+  var options = {
+    url: 'http://project-elephant.s3-website.us-east-2.amazonaws.com',
+  };
+
+  request(options, (error, response, body) => {
+    if (error || response.statusCode != 200) {
+      callback(error);
     } else {
-      let objectData = data.Body.toString('utf-8');
-      callback(null, {
-        statusCode: 200,
-        body: objectData
-      })
+      callback(null, body);
     }
   });
 };
