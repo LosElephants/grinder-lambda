@@ -90,7 +90,8 @@ var authenticate = (auth, callback) => {
 var succeed = (data) => {
   return {
     statusCode: 200,
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
+    headers: { "Access-Control-Allow-Origin" : "*" }
   };
 }
 
@@ -112,11 +113,13 @@ const unauthorized = error("Unauthorized", 401);
 module.exports.getProfile = (event, context, callback) => {
   if (!event.headers.Authorization) {
     callback(null, unauthorized);
+    return;
   }
 
   authenticate(event.headers.Authorization, (err, authProfile) => {
-    if (err || !authProfile) {
+    if (err || !authProfile || !authProfile.sub) {
       callback(null, unauthorized);
+      return;
     }
 
     var client = getDynamoClient();
@@ -124,13 +127,13 @@ module.exports.getProfile = (event, context, callback) => {
       if (err || !data) {
         createProfile(authProfile, (err, data) => {
           if (err) {
-            console.log("failure creating profile? defect or system outage");
             callback(null, error(err));
+            return;
           } else {
             getProfile(authProfile.sub, (err, data) => {
               if (err) {
-                console.log("failure getting profile that just got created? defect or system outage");
                 callback(null, error(err));
+                return;
               } else {
                 callback(null, succeed(data));
               }
