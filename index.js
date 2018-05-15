@@ -184,3 +184,15 @@ module.exports.updateProfile = (event, context, callback) => {
     }, client);
   });
 };
+
+module.exports.accessControlAllowOrigin = (event, context, configuration) => {
+  const response = event.Records[0].cf.response;
+  const headers = response.headers;
+
+  headers['access-control-allow-origin'] = [{
+    key: 'Access-Control-Allow-Origin',
+    value: "*"
+  }];
+
+  callback(null, response);
+}
