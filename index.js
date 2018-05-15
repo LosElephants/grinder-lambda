@@ -186,7 +186,7 @@ module.exports.updateProfile = (event, context, callback) => {
 };
 
 module.exports.app = (event, context, callback) => {
-  var s3 = new AWS.s3();
+  var s3 = new AWS.S3();
   var params = {
     Bucket: "",
     Key: "index.html",
