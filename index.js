@@ -187,14 +187,21 @@ module.exports.updateProfile = (event, context, callback) => {
 
 module.exports.app = (event, context, callback) => {
   var options = {
-    url: 'http://project-elephant.s3-website.us-east-2.amazonaws.com',
+    url: 'http://project-elephant-dev.s3-website.us-east-2.amazonaws.com/',
   };
 
   request(options, (error, response, body) => {
     if (error || response.statusCode != 200) {
       callback(error);
     } else {
-      callback(null, body);
+      callback(null, {
+        statusCode: 200,
+        body: body,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "text/html"
+        }
+      });
     }
   });
 };
