@@ -108,12 +108,21 @@ var succeed = (data) => {
   };
 }
 
+var error = (err, code) => {
+  return {
+    statusCode: code || 500,
+    body: {
+      error: err
+    }
+  }
+}
+
 module.exports.getProfile = (event, context, callback) => {
   if (!event.headers.Authorization) {
     callback(null, unauthorized);
   }
 
-  callback(null, event);
+  callback(null, succeed(event));
   return;
 
   authenticate(event.headers.Authorization, (err, authProfile) => {
@@ -127,12 +136,12 @@ module.exports.getProfile = (event, context, callback) => {
         createProfile(authProfile, (err, data) => {
           if (err) {
             console.log("failure creating profile? defect or system outage");
-            callback(err);
+            callback(null, error(err));
           } else {
             getProfile(authProfile.sub, (err, data) => {
               if (err) {
                 console.log("failure getting profile that just got created? defect or system outage");
-                callback(err);
+                callback(null, error(err));
               } else {
                 callback(null, succeed(data));
               }
