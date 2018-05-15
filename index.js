@@ -4,7 +4,7 @@ var request = require('request');
 
 var AWS = require('aws-sdk');
 AWS.config.update({
-  region: 'us-east-2'
+  region: 'us-east-2',
 });
 
 var getDynamoClient = () => {
@@ -92,6 +92,15 @@ const unauthorized = {
   body: JSON.stringify({ message: "Unauthorized" })
 }
 
+var badRequest = (msg) => {
+  return {
+    statusCode: 400,
+    body: {
+      message: msg || "Bad Request"
+    }
+  };
+}
+
 var succeed = (data) => {
   return {
     statusCode: 200,
@@ -103,6 +112,9 @@ module.exports.getProfile = (event, context, callback) => {
   if (!event.headers.Authorization) {
     callback(null, unauthorized);
   }
+
+  callback(null, event);
+  return;
 
   authenticate(event.headers.Authorization, (err, authProfile) => {
     if (err || !authProfile) {
@@ -122,7 +134,6 @@ module.exports.getProfile = (event, context, callback) => {
                 console.log("failure getting profile that just got created? defect or system outage");
                 callback(err);
               } else {
-                console.log("succeeding", data);
                 callback(null, succeed(data));
               }
             }, client);
@@ -146,6 +157,9 @@ module.exports.updateProfile = (event, context, callback) => {
     }
 
     var profile = JSON.parse(event.body);
+    if (!profile || !profile.userId) {
+      callback(null, badRequest("userId is a required field"));
+    }
     if (profile.userId !== authProfile.sub) {
       callback(null, unauthorized);
     }
