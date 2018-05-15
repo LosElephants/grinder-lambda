@@ -186,8 +186,10 @@ module.exports.updateProfile = (event, context, callback) => {
 };
 
 module.exports.app = (event, context, callback) => {
+  var resource = event.path.substring(4);
+
   var options = {
-    url: 'http://project-elephant-dev.s3-website.us-east-2.amazonaws.com/',
+    url: `http://project-elephant-dev.s3-website.us-east-2.amazonaws.com${resource}`,
   };
 
   request(options, (error, response, body) => {
