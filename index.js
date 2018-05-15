@@ -95,16 +95,14 @@ const unauthorized = {
 var badRequest = (msg) => {
   return {
     statusCode: 400,
-    body: {
-      message: msg || "Bad Request"
-    }
+    body: JSON.stringify({ message: msg || "Bad Request" })
   };
 }
 
 var succeed = (data) => {
   return {
     statusCode: 200,
-    body: data
+    body: JSON.stringify(data)
   };
 }
 
