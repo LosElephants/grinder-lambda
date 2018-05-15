@@ -58,16 +58,22 @@ plugins:
 #    - exclude-me-dir/**
 
 functions:
+  app:
+    handler: index.app
+    events:
+      - http:
+            path: /
+            method: GET
   getProfile:
     handler: index.getProfile
-    events: 
-      - http: 
+    events:
+      - http:
             path: profile
             method: GET
   updateProfile:
     handler: index.updateProfile
-    events: 
-      - http: 
+    events:
+      - http:
             path: profile
             method: POST
 

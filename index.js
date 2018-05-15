@@ -91,7 +91,6 @@ var succeed = (data) => {
   return {
     statusCode: 200,
     body: JSON.stringify(data),
-    headers: { "Access-Control-Allow-Origin" : "*" }
   };
 }
 
@@ -183,5 +182,26 @@ module.exports.updateProfile = (event, context, callback) => {
         }, client);
       }
     }, client);
+  });
+};
+
+module.exports.app = (event, context, callback) => {
+  var s3 = new AWS.s3();
+  var params = {
+    Bucket: "",
+    Key: "index.html",
+  }
+  s3.getObject(params, function(err, data) {
+    if (err) {
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({ error : err })
+      })
+    } else {
+      callback(null, {
+        statusCode: 200,
+        body: data
+      })
+    }
   });
 };
