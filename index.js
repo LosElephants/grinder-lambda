@@ -120,9 +120,6 @@ module.exports.getProfile = (event, context, callback) => {
     callback(null, error("Unauthorized", 401));
   }
 
-  callback(null, succeed(event));
-  return;
-
   authenticate(event.headers.Authorization, (err, authProfile) => {
     if (err || !authProfile) {
       callback(null, unauthorized);
