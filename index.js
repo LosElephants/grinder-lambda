@@ -109,15 +109,15 @@ var succeed = (data) => {
 var error = (err, code) => {
   return {
     statusCode: code || 500,
-    body: {
+    body: JSON.stringify({
       error: err
-    }
+    })
   }
 }
 
 module.exports.getProfile = (event, context, callback) => {
   if (!event.headers.Authorization) {
-    callback(null, unauthorized);
+    callback(null, error("Unauthorized", 401));
   }
 
   callback(null, succeed(event));
