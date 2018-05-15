@@ -189,7 +189,7 @@ module.exports.app = (event, context, callback) => {
   AWS.config.update({
     region: 'us-east-2',
   });
-  var s3 = new AWS.S3();
+  var s3 = new AWS.S3({ region: 'us-east-2' });
   var params = {
     Bucket: "",
     Key: "index.html",
