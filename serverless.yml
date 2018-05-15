@@ -58,12 +58,6 @@ plugins:
 #    - exclude-me-dir/**
 
 functions:
-  app:
-    handler: index.app
-    events:
-      - http:
-            path: /
-            method: GET
   getProfile:
     handler: index.getProfile
     events:

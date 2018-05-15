@@ -184,26 +184,3 @@ module.exports.updateProfile = (event, context, callback) => {
     }, client);
   });
 };
-
-module.exports.app = (event, context, callback) => {
-  var resource = event.path.substring(4);
-
-  var options = {
-    url: `http://project-elephant-dev.s3-website.us-east-2.amazonaws.com${resource}`,
-  };
-
-  request(options, (error, response, body) => {
-    if (error || response.statusCode != 200) {
-      callback(error);
-    } else {
-      callback(null, {
-        statusCode: 200,
-        body: body,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "text/html"
-        }
-      });
-    }
-  });
-};
