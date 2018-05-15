@@ -186,6 +186,9 @@ module.exports.updateProfile = (event, context, callback) => {
 };
 
 module.exports.app = (event, context, callback) => {
+  AWS.config.update({
+    region: 'us-east-2',
+  });
   var s3 = new AWS.S3();
   var params = {
     Bucket: "",
@@ -198,9 +201,10 @@ module.exports.app = (event, context, callback) => {
         body: JSON.stringify({ error : err })
       })
     } else {
+      let objectData = data.Body.toString('utf-8');
       callback(null, {
         statusCode: 200,
-        body: data
+        body: objectData
       })
     }
   });
