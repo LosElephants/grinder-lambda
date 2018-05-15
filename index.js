@@ -87,18 +87,6 @@ var authenticate = (auth, callback) => {
   });
 }
 
-const unauthorized = {
-  statusCode: 401,
-  body: JSON.stringify({ message: "Unauthorized" })
-}
-
-var badRequest = (msg) => {
-  return {
-    statusCode: 400,
-    body: JSON.stringify({ message: msg || "Bad Request" })
-  };
-}
-
 var succeed = (data) => {
   return {
     statusCode: 200,
@@ -115,9 +103,15 @@ var error = (err, code) => {
   }
 }
 
+var badRequest = (msg) => {
+  return error(msg, 400);
+}
+
+const unauthorized = error("Unauthorized", 401);
+
 module.exports.getProfile = (event, context, callback) => {
   if (!event.headers.Authorization) {
-    callback(null, error("Unauthorized", 401));
+    callback(null, unauthorized);
   }
 
   authenticate(event.headers.Authorization, (err, authProfile) => {
@@ -172,7 +166,7 @@ module.exports.updateProfile = (event, context, callback) => {
 
     getProfile(profile.userId, (err, data) => {
       if (err) {
-        callback(err);
+        callback(null, error(err));
       } else {
         for (var key in profile) {
           data[key] = profile[key];
