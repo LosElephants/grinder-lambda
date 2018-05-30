@@ -59,17 +59,27 @@ plugins:
 
 functions:
   getProfile:
-    handler: index.getProfile
+    handler: profile/index.getProfile
     events:
       - http:
             path: profile
             method: GET
+    package:
+      include:
+        - profile/**
+        - node_modules/request
+        - node_modules/aws-sdk
   updateProfile:
-    handler: index.updateProfile
+    handler: profile/index.updateProfile
     events:
       - http:
             path: profile
             method: POST
+    package:
+      include:
+        - profile/**
+        - node_modules/request
+        - node_modules/aws-sdk
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

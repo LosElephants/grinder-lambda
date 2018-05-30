@@ -10,7 +10,7 @@
     "serverless-offline": "^3.21.1"
   },
   "scripts": {
-    "start": "./node_modules/.bin/sls offline -s dev",
+    "start": "./node_modules/.bin/sls offline -P 5000 -s dev",
     "debug": "export SLS_DEBUG=* && node --debug ./node_modules/.bin/sls offline -s dev",
     "test": "echo \"no tests configured yet\" && exit 0"
   },
