@@ -113,8 +113,9 @@ module.exports.getDataPoints = (event, context, callback) => {
       return;
     }
 
+    var qParams = event.queryStringParameters;
     var client = getDynamoClient();
-    getDataPoints(event.body.deviceId, event.body.startDate, event.body.endDate, client, (err, data) => {
+    getDataPoints(qParams.deviceId, qParams.startDate, qParams.endDate, client, (err, data) => {
       if (err) {
         callback(null, responses.error(err));
       } else {
