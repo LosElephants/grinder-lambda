@@ -1,6 +1,8 @@
 'use strict';
 
 var request = require('request');
+var responses = require('../util/Responses');
+var common = require('../util/Common');
 
 var AWS = require('aws-sdk');
 AWS.config.update({
@@ -24,6 +26,7 @@ var newProfile = (authProfile) => {
     profile.locale = authProfile.locale;
     profile.email = authProfile.email;
     profile.emailVerified = authProfile.email_verified;
+    profile.devices = [];
   }
 
   return profile;
@@ -59,7 +62,7 @@ var getProfile = (userId, callback, client) => {
       userId: userId
     }
   }
-  client.get(getParams, (err, data) => {
+  docClient.get(getParams, (err, data) => {
     if (err) {
       console.log('error getting profile with id:', getParams.Key.userId);
       callback(err);
@@ -70,57 +73,15 @@ var getProfile = (userId, callback, client) => {
   });
 };
 
-var authenticate = (auth, callback) => {
-  var options = {
-    url: 'https://grinder.auth0.com/userinfo',
-    headers: {
-      'Authorization': auth
-    }
-  };
-
-  request(options, (error, response, body) => {
-    if (error || response.statusCode != 200) {
-      callback(error);
-    } else {
-      callback(null, JSON.parse(body));
-    }
-  });
-}
-
-var succeed = (data) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(data),
-    headers: {
-      "Access-Control-Allow-Origin": "*"
-    }
-  };
-}
-
-var error = (err, code) => {
-  return {
-    statusCode: code || 500,
-    body: JSON.stringify({
-      error: err
-    })
-  }
-}
-
-var badRequest = (msg) => {
-  return error(msg, 400);
-}
-
-const unauthorized = error("Unauthorized", 401);
-
 module.exports.getProfile = (event, context, callback) => {
   if (!event.headers.Authorization) {
-    callback(null, unauthorized);
+    callback(null, responses.unauthorized);
     return;
   }
 
   authenticate(event.headers.Authorization, (err, authProfile) => {
     if (err || !authProfile || !authProfile.sub) {
-      callback(null, unauthorized);
+      callback(null, responses.unauthorized);
       return;
     }
 
@@ -129,21 +90,21 @@ module.exports.getProfile = (event, context, callback) => {
       if (err || !data) {
         createProfile(authProfile, (err, data) => {
           if (err) {
-            callback(null, error(err));
+            callback(null, responses.error(err));
             return;
           } else {
             getProfile(authProfile.sub, (err, data) => {
               if (err) {
-                callback(null, error(err));
+                callback(null, responses.error(err));
                 return;
               } else {
-                callback(null, succeed(data));
+                callback(null, responses.succeed(data));
               }
             }, client);
           }
         }, client);
       } else {
-        callback(null, succeed(data));
+        callback(null, responses.succeed(data));
       }
     }, client);
   });
@@ -151,36 +112,36 @@ module.exports.getProfile = (event, context, callback) => {
 
 module.exports.updateProfile = (event, context, callback) => {
   if (!event.headers.Authorization) {
-    callback(null, unauthorized);
+    callback(null, responses.unauthorized);
   }
 
   authenticate(event.headers.Authorization, (err, authProfile) => {
     if (err || !authProfile) {
-      callback(null, unauthorized);
+      callback(null, responses.unauthorized);
     }
 
     var profile = JSON.parse(event.body);
     if (!profile || !profile.userId) {
-      callback(null, badRequest("userId is a required field"));
+      callback(null, responses.badRequest("userId is a required field"));
     }
     if (profile.userId !== authProfile.sub) {
-      callback(null, unauthorized);
+      callback(null, responses.unauthorized);
     }
 
     var client = getDynamoClient();
 
     getProfile(profile.userId, (err, data) => {
       if (err) {
-        callback(null, error(err));
+        callback(null, responses.error(err));
       } else {
         for (var key in profile) {
           data[key] = profile[key];
         }
         saveProfile(data, (err, d) => {
           if (err) {
-            callback(err);
+            callback(null, responses.error(err));
           } else {
-            callback(null, succeed(data));
+            callback(null, responses.succeed(data));
           }
         }, client);
       }

@@ -80,6 +80,28 @@ functions:
         - profile/**
         - node_modules/request
         - node_modules/aws-sdk
+  getDataPoints:
+    handler: grinderdata/index.getDataPoints
+    events:
+      - http:
+            path: grinderdata
+            method: GET
+    package:
+      include:
+        - grinderdata/**
+        - node_modules/request
+        - node_modules/aws-sdk
+  postDataPoint:
+    handler: grinderdata/index.postDataPoint
+    events:
+      - http:
+            path: grinderdata
+            method: POST
+    package:
+      include:
+        - grinderdata/**
+        - node_modules/request
+        - node_modules/aws-sdk
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
