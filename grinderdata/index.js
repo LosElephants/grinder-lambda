@@ -36,7 +36,7 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
     callback('endDate must come after startDate');
   }
 
-  var getParams = {
+  var queryParams = {
     TableName: grinderTable,
     FilterExpression: "timestamp between :start and :end",
     ExpressionAttributeValues: {
@@ -44,7 +44,7 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
       ":end": endDate.toLocaleString()
     }
   }
-  docClient.get(getParams, (err, data) => {
+  docClient.query(queryParams, (err, data) => {
     if (err) {
       callback(err);
     } else {
@@ -69,6 +69,7 @@ var saveDataPoint = (dataPoint, client, callback) => {
 };
 
 module.exports.postDataPoint = (event, context, callback) => {
+
   if (!event.headers.Authorization) {
     callback(null, responses.unauthorized);
   }
@@ -79,16 +80,18 @@ module.exports.postDataPoint = (event, context, callback) => {
       return;
     }
 
-    if (!event.body.reading) {
+    var body = JSON.parse(event.body);
+
+    if (!body.reading) {
       callback(null, responses.error("reading is a required parameter"));
       return;
     }
 
     var dataPoint;
-    if (event.body.deviceId) {
-      dataPoint = event.body;
+    if (body.deviceId) {
+      dataPoint = body;
     } else {
-      dataPoint = firstReading(event.body.reading);
+      dataPoint = firstReading(body.reading);
     }
 
     var client = getDynamoClient();
@@ -113,9 +116,14 @@ module.exports.getDataPoints = (event, context, callback) => {
       return;
     }
 
-    var qParams = event.queryStringParameters;
+    if (!event.queryStringParameters) {
+      callback(null, responses.error("deviceId is a required parameter"));
+      return;
+    }
+    var startDate = event.queryStringParameters.startDate || new Date(0);
+    var endDate = event.queryStringParameters.endDate || new Date();
     var client = getDynamoClient();
-    getDataPoints(qParams.deviceId, qParams.startDate, qParams.endDate, client, (err, data) => {
+    getDataPoints(event.queryStringParameters.deviceId, startDate, endDate, client, (err, data) => {
       if (err) {
         callback(null, responses.error(err));
       } else {
