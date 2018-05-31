@@ -19,7 +19,7 @@ var newReading = (grinderId, reading) => {
   return {
     deviceId: grinderId,
     reading: reading,
-    createdDate: new Date().toLocaleString()
+    createdDate: new Date().getMilliseconds()
   };
 }
 
@@ -40,8 +40,8 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
     TableName: grinderTable,
     KeyConditionExpression: "deviceId = :deviceId and createdDate between :start and :end",
     ExpressionAttributeValues: {
-      ":start": {"S": startDate.toLocaleString()},
-      ":end": {"S": endDate.toLocaleString()},
+      ":start": {"S": startDate.getMilliseconds()},
+      ":end": {"S": endDate.getMilliseconds()},
       ":deviceId": {"S": grinderId}
     }
   }
