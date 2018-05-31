@@ -18,7 +18,7 @@ var getDynamoClient = () => {
 var newReading = (grinderId, reading) => {
   return {
     deviceId: grinderId,
-    reading: reading,
+    "reading": reading,
     createdDate: new Date().valueOf()
   };
 }
