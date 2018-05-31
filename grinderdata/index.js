@@ -19,7 +19,7 @@ var newReading = (grinderId, reading) => {
   return {
     uuid: grinderId,
     reading: reading,
-    timestamp: new Date().toLocaleString()
+    createdDate: new Date().toLocaleString()
   };
 }
 
@@ -38,6 +38,7 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
 
   var queryParams = {
     TableName: grinderTable,
+    KeyConditionExpression: grinderId,
     FilterExpression: "createdDate between :start and :end",
     ExpressionAttributeValues: {
       ":start": startDate.toLocaleString(),
@@ -57,7 +58,8 @@ var saveDataPoint = (dataPoint, client, callback) => {
   var docClient = client || getDynamoClient();
   var putParams = {
     TableName: grinderTable,
-    Item: dataPoint
+    Item: dataPoint,
+    Key: dataPoint.uuid
   }
   docClient.put(putParams, (err, data) => {
     if (err) {
