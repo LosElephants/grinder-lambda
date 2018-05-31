@@ -4,7 +4,7 @@ var request = require('request');
 var uuid = require('uuid/v4');
 var common = require('../util/Common');
 var responses = require('../util/Responses');
-const grinderTable = "GrinderReadings"
+const grinderTable = "GrinderData"
 
 var AWS = require('aws-sdk');
 AWS.config.update({
@@ -38,7 +38,7 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
 
   var queryParams = {
     TableName: grinderTable,
-    FilterExpression: "timestamp between :start and :end",
+    FilterExpression: "createdDate between :start and :end",
     ExpressionAttributeValues: {
       ":start": startDate.toLocaleString(),
       ":end": endDate.toLocaleString()
