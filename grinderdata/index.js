@@ -24,7 +24,7 @@ var newReading = (grinderId, reading) => {
 }
 
 var firstReading = (reading) => {
-  var reading = newReading();
+  var reading = newReading(null, reading);
   reading.deviceId = uuid();
   return reading;
 };
