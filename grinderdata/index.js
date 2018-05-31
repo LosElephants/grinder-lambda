@@ -38,12 +38,11 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
 
   var queryParams = {
     TableName: grinderTable,
-    KeyConditionExpression: "grinderId = :grinderId",
-    FilterExpression: "createdDate between :start and :end",
+    KeyConditionExpression: "uuid = :uuid and createdDate between :start and :end",
     ExpressionAttributeValues: {
-      ":start": startDate.toLocaleString(),
-      ":end": endDate.toLocaleString(),
-      ":grinderId": grinderId
+      ":start": {"S": startDate.toLocaleString()},
+      ":end": {"S": endDate.toLocaleString()},
+      ":uuid": {"S": grinderId}
     }
   }
   docClient.query(queryParams, (err, data) => {
