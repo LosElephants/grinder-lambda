@@ -49,7 +49,7 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
     if (err) {
       callback(err);
     } else {
-      callback(null, data.Item);
+      callback(null, data);
     }
   });
 };
