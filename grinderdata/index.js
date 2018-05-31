@@ -19,7 +19,7 @@ var newReading = (grinderId, reading) => {
   return {
     deviceId: grinderId,
     reading: reading,
-    createdDate: new Date().getMilliseconds()
+    createdDate: new Date().valueOf()
   };
 }
 
@@ -40,8 +40,8 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
     TableName: grinderTable,
     KeyConditionExpression: "deviceId = :deviceId and createdDate between :start and :end",
     ExpressionAttributeValues: {
-      ":start": startDate.getMilliseconds(),
-      ":end": endDate.getMilliseconds(),
+      ":start": startDate.valueOf(),
+      ":end": endDate.valueOf(),
       ":deviceId": grinderId
     }
   }
@@ -101,7 +101,7 @@ module.exports.postDataPoint = (event, context, callback) => {
       if (err) {
         callback(null, responses.error(err));
       } else {
-        callback(null, responses.succeed(data));
+        callback(null, responses.succeed(dataPoint));
       }
     });
   });
