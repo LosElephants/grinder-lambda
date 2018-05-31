@@ -79,7 +79,7 @@ module.exports.getProfile = (event, context, callback) => {
     return;
   }
 
-  authenticate(event.headers.Authorization, (err, authProfile) => {
+  common.authenticate(event.headers.Authorization, (err, authProfile) => {
     if (err || !authProfile || !authProfile.sub) {
       callback(null, responses.unauthorized);
       return;
@@ -115,7 +115,7 @@ module.exports.updateProfile = (event, context, callback) => {
     callback(null, responses.unauthorized);
   }
 
-  authenticate(event.headers.Authorization, (err, authProfile) => {
+  common.authenticate(event.headers.Authorization, (err, authProfile) => {
     if (err || !authProfile) {
       callback(null, responses.unauthorized);
     }

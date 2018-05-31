@@ -21,4 +21,4 @@ module.exports.badRequest = (msg) => {
     return error(msg, 400);
 }
 
-module.exports.unauthorized = error("Unauthorized", 401);
+module.exports.unauthorized = module.exports.error("Unauthorized", 401);
