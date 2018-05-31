@@ -40,9 +40,9 @@ var getDataPoints = (grinderId, startDate, endDate, client, callback) => {
     TableName: grinderTable,
     KeyConditionExpression: "deviceId = :deviceId and createdDate between :start and :end",
     ExpressionAttributeValues: {
-      ":start": {"S": startDate.getMilliseconds()},
-      ":end": {"S": endDate.getMilliseconds()},
-      ":deviceId": {"S": grinderId}
+      ":start": startDate.getMilliseconds(),
+      ":end": endDate.getMilliseconds(),
+      ":deviceId": grinderId
     }
   }
   docClient.query(queryParams, (err, data) => {
